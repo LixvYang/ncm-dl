@@ -2,9 +2,11 @@ package main
 
 import (
 	"flag"
+	"ncm-dl/common"
 	"ncm-dl/logger"
 	"ncm-dl/utils"
-	"ncm-dl/common"
+
+	"ncm-cl/handlers"
 )
 
 func main() {
@@ -16,5 +18,9 @@ func main() {
 		logger.Error.Fatalf("Failed to build path: %s: %s", common.MP3DownloadDir, err)
 	}
 
-
+	url := flag.Args()[0]
+	req, err := handler.Parse(url)
+	if err != nil {
+		logger.Error.Fatal(err)
+	} 
 }
