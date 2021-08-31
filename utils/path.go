@@ -2,6 +2,8 @@ package utils
 
 import (
 	"os"
+	"strings"
+	"regexp"
 )
 
 //
@@ -31,4 +33,10 @@ func BytesReverse(b []byte) []byte {
 		b[i], b[j] = b[j], b[i]
 	}
 	return b
+}
+
+func TrimInvalidFilePathChars(path string) string {
+	path = strings.TrimSpace(path)
+	re := regexp.MustCompile("[\\\\/:*?\"<>|]")
+	return re.ReplaceAllString(path, "")
 }

@@ -1,6 +1,11 @@
 package netease
 
 import (
+	"fmt"
+	"ncm-dl/common"
+	"ncm-dl/utils"
+	"strings"
+	"time"
 )
 
 type Artist struct {
@@ -38,4 +43,33 @@ type Playlist struct {
 	Id       int       `json:"id"`
 	Name     string    `json:"name"`
 	TrackIds []TrackId `json:"trackIds"`
+}
+
+func (s *Song) Extract() *common.MP3 {
+	title, album := strings.TrimSpace(s.Name), strings.TrimSpace(s.Album.Name)
+	publishTime := time.Unix(0, s.PublishTime*1000*1000)
+	year, track := fmt.Sprintf("%d", publishTime.Year()), fmt.Sprintf("%d", s.Position)
+	coverImage := s.Album.PicUrl
+
+	artistList := make([]string, 0, len(s.Artist))
+	for _, ar := range s.Artist {
+		artistList = append(artistList, strings.TrimSpace(ar.Name))
+	}
+	artist := strings.Join(artistList, "/")
+
+	fileName := utils.TrimInvalidFilePathChars(fmt.Sprintf("%s - %s.mp3", strings.Join(artistList, " "), title))
+	tag := common.Tag{
+		Title:      title,
+		Artist:     artist,
+		Album:      album,
+		Year:       year,
+		Track:      track,
+		CoverImage: coverImage,
+	}
+
+	return &common.MP3{
+		FileName: fileName,
+		Tag:      tag,
+		Origin:   common.NeteaseMusic,
+	}
 }
