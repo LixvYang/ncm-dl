@@ -5,7 +5,7 @@ import (
 	"ncm-dl/common"
 	"ncm-dl/logger"
 	"ncm-dl/utils"
-	"ncm-cl/handler"
+	"ncm-dl/handler"
 )
 
 func main() {
@@ -25,5 +25,21 @@ func main() {
 
 	if err = req.Do(); err != nil {
 		logger.Error.Fatal(err)
+	}
+
+	mp3List, err := req.Extract()
+	if err != nil {
+		logger.Error.Fatal(err)
+	}
+
+	n := common.MP3ConcurrentDownloadTasksNumber
+	for n > common.MaxConcurrentDownloadTasksNumber {
+		n = common.MaxConcurrentDownloadTasksNumber
+	}
+	switch {
+	case n > 1:
+		handler.ConcurrentDownload(mp3List, n)
+	default:
+		handler.SingleDownload(mp3List)
 	}
 }

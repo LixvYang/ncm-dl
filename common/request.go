@@ -69,6 +69,8 @@ func Request(method, url string, query map[string]string, body io.Reader, origin
 		req.Header.Set("Origin", NeteaseMusicOrigin)
 		req.Header.Set("Referer", NeteaseMusicReferer)
 		req.Header.Set("Cookie", NeteaseMusicCookie)
+	
+	}
 	req.Header.Set("User-Agent", chooseUserAgent())
 
 	client := &http.Client{
