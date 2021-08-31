@@ -5,8 +5,7 @@ import (
 	"ncm-dl/common"
 	"ncm-dl/logger"
 	"ncm-dl/utils"
-
-	"ncm-cl/handlers"
+	"ncm-cl/handler"
 )
 
 func main() {
@@ -22,5 +21,9 @@ func main() {
 	req, err := handler.Parse(url)
 	if err != nil {
 		logger.Error.Fatal(err)
-	} 
+	}
+
+	if err = req.Do(); err != nil {
+		logger.Error.Fatal(err)
+	}
 }

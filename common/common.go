@@ -3,6 +3,10 @@ package common
 import (
 )
 
+const (
+	NeteaseMusic = 1000 + iota
+)
+
 type Tag struct {
 	Title      string
 	Artist     string
