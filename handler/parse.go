@@ -3,9 +3,9 @@ package handler
 import (
 	"fmt"
 	"ncm-dl/common"
+	"ncm-dl/logger"
 	"ncm-dl/netease"
 	"regexp"
-	
 )
 
 const (
@@ -23,7 +23,10 @@ func Parse(url string) (req common.MusicRequest,err error) {
 	switch matched {
 	case "music.163.com":
 		req, err = netease.Parse(url)
+		if err != nil {
+			logger.Error.Fatal("could not matched url")
+		}
 	}
 
-	return
+	return req, err
 }

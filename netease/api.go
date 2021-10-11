@@ -1,9 +1,11 @@
+// Package netease provides
 package netease
 
 import (
 	"encoding/json"
 	"fmt"
 	"ncm-dl/common"
+	"ncm-dl/logger"
 	"net/http"
 	"net/url"
 	"strings"
@@ -13,9 +15,6 @@ const (
 	WeAPI       = "https://music.163.com/weapi"
 	SongUrlAPI  = WeAPI + "/song/enhance/player/url"
 	SongAPI     = WeAPI + "/v3/song/detail"
-	ArtistAPI   = WeAPI + "/v1/artist"
-	AlbumAPI    = WeAPI + "/v1/album"
-	PlaylistAPI = WeAPI + "/v3/playlist/detail"
 )
 
 type SongUrlParams struct {
@@ -55,7 +54,6 @@ func NewSongUrlRequest(ids ...int) *SongUrlRequest {
 	switch br {
 	case 128, 192, 320:
 		br *= 1000
-		break
 	default:
 		br = 999 * 1000
 	}
@@ -70,12 +68,18 @@ func NewSongRequest(ids ...int) *SongRequest {
 		c = append(c,map[string]int{"id":id})
 	}
 
-	enc,_ := json.Marshal(c)
+	enc,err := json.Marshal(c)
+	if err != nil {
+		logger.Error.Fatalf("Json marshal error:%s",err)
+	}
 	return &SongRequest{Params: SongParams{C: string(enc)}}
 }
 
 func (s *SongUrlRequest) Do() error {
-	enc, _ := json.Marshal(s.Params)
+	enc, err := json.Marshal(s.Params)
+	if err != nil {
+		logger.Error.Fatalf("Json marshal error:%s",err)
+	}
 	params, encSecKey, err := Encrypt(enc)
 	if err != nil {
 		return err
@@ -86,7 +90,7 @@ func (s *SongUrlRequest) Do() error {
 	form.Set("encSecKey", encSecKey)
 	resp, err := common.Request("POST", SongUrlAPI, nil, strings.NewReader(form.Encode()), common.NeteaseMusic)
 	if err != nil {
-		return err
+		logger.Error.Fatalf("common Request failed: %s",err)
 	}
 	defer resp.Body.Close()
 
@@ -101,7 +105,10 @@ func (s *SongUrlRequest) Do() error {
 }
 
 func (s *SongRequest) Do() error {
-	enc, _ := json.Marshal(s.Params)
+	enc, err := json.Marshal(s.Params)
+	if err != nil {
+		logger.Error.Fatalf("Json could not marshal: %s",err)
+	}
 	params,encSecKey,err := Encrypt(enc)
 	if err != nil {
 		return err
@@ -130,3 +137,4 @@ func (s *SongRequest) Do() error {
 func (s *SongRequest) Extract() ([]*common.MP3,error) {
 	return ExtractMP3List(s.Response.Songs,".")
 }
+

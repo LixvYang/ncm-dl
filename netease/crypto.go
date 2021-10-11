@@ -26,7 +26,7 @@ func Encrypt(origData []byte) (params,encSecKey string,err error) {
 		return
 	}
 
-	secKey := createSecretKey(16,Base62) 
+	secKey := createSecretKey(16,Base62)
 
 	enc2,err := aesCBCEncrypt([]byte(enc1),secKey,[]byte(IV))
 	if err != nil {
@@ -42,7 +42,7 @@ func rsaEncrypt(origData []byte,modulus string,exponent int64) string {
 
 	bigOrigData.SetBytes(origData)
 	bigModulus.SetString(modulus,16)
-	
+
 	return fmt.Sprintf("%0256x", bigOrigData.Exp(bigOrigData, big.NewInt(exponent), bigModulus))
 
 }

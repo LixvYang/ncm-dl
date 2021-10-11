@@ -4,7 +4,7 @@ import (
 	"ncm-dl/common"
 )
 
-func ExtractMP3List(songs []Song,savePath string) ([]*common.MP3,error) {
+func ExtractMP3List(songs []Song, savePath string) ([]*common.MP3, error) {
 	n := len(songs)
 	ids := make([]int, 0, n)
 	for _, i := range songs {
@@ -16,13 +16,12 @@ func ExtractMP3List(songs []Song,savePath string) ([]*common.MP3,error) {
 		return nil, err
 	}
 
-	
 	codeMap, urlMap := make(map[int]int, n), make(map[int]string, n)
 	for _, i := range req.Response.Data {
 		codeMap[i.Id] = i.Code
 		urlMap[i.Id] = i.Url
 	}
-	
+
 	mp3List := make([]*common.MP3, 0, n)
 	for _, i := range songs {
 		mp3 := i.Extract()

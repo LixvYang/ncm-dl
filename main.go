@@ -20,16 +20,16 @@ func main() {
 	url := flag.Args()[0]
 	req, err := handler.Parse(url)
 	if err != nil {
-		logger.Error.Fatal(err)
+		logger.Error.Fatalf("Failed to build hander Parse:%s",err)
 	}
 
 	if err = req.Do(); err != nil {
-		logger.Error.Fatal(err)
+		logger.Error.Fatalf("Failed to build req Do:%s",err)
 	}
 
 	mp3List, err := req.Extract()
 	if err != nil {
-		logger.Error.Fatal(err)
+		logger.Error.Fatalf("Failed to build req Extract:%s",err)
 	}
 
 	n := common.MP3ConcurrentDownloadTasksNumber
@@ -43,3 +43,4 @@ func main() {
 		handler.SingleDownload(mp3List)
 	}
 }
+
